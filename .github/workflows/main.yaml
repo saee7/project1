@@ -12,9 +12,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      
+
+      - name: Fix DNS Resolution Issue (Optional)
+        run: echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+
       - name: Log in to Render Container Registry
-        run: echo ${{ secrets.RENDER_API_KEY }} | docker login registry.render.com -u render --password-stdin
+        run: echo "${{ secrets.RENDER_API_KEY }}" | docker login registry.render.com -u render --password-stdin
 
       - name: Build and Push Docker Image
         run: |
@@ -26,4 +29,5 @@ jobs:
           curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
           -H "Accept: application/json" \
-          -d ''
+          -H "Content-Type: application/json" \
+          -d '{}'
