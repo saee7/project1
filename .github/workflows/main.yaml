@@ -13,8 +13,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Fix DNS Resolution Issue (Optional)
-        run: echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+      - name: Fix DNS Resolution Issue
+        run: |
+          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+          echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf > /dev/null
 
       - name: Log in to Render Container Registry
         run: echo "${{ secrets.RENDER_API_KEY }}" | docker login registry.render.com -u render --password-stdin
