@@ -3,7 +3,7 @@ name: Deploy to Render
 on:
   push:
     branches:
-      - main  # Trigger deployment on main branch pushes
+      - main  # Adjust branch as needed
 
 jobs:
   deploy:
@@ -15,8 +15,9 @@ jobs:
 
       - name: Fix DNS Resolution Issue
         run: |
-          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
-          echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf > /dev/null
+          sudo rm -f /etc/resolv.conf
+          echo -e "nameserver 8.8.8.8\nnameserver 1.1.1.1" | sudo tee /etc/resolv.conf
+          sudo systemctl restart systemd-resolved
 
       - name: Log in to Render Container Registry
         run: echo "${{ secrets.RENDER_API_KEY }}" | docker login registry.render.com -u render --password-stdin
